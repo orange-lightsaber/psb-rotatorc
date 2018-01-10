@@ -1,5 +1,5 @@
 # psb-rotatorc
-For rotation handling and pre/post run clean-ups
+psb rotation handling
 
 This is the client application for the psb-rotatord daemon, it is ran remotely via ssh. Installing the daemon and client is manditory for all remote backup jobs.
 
