@@ -11,7 +11,7 @@ import (
 	"github.com/orange-lightsaber/psb-rotatord/sockets"
 )
 
-type Run struct {
+type initCmd struct {
 	name    string
 	compkey string
 	freq    int
@@ -22,7 +22,7 @@ type Run struct {
 	initial int
 }
 
-func (cmd *Run) SetFlags(f *flag.FlagSet) {
+func (cmd *initCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&cmd.name, "name", "", "")
 	f.StringVar(&cmd.compkey, "compkey", "", "")
 	f.IntVar(&cmd.freq, "freq", -1, "")
@@ -33,7 +33,7 @@ func (cmd *Run) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.initial, "initial", -1, "")
 }
 
-func (cmd *Run) CheckFlags() (r bool) {
+func (cmd *initCmd) CheckFlags() (r bool) {
 	switch {
 	case cmd.name == "":
 	case cmd.compkey == "":
@@ -49,25 +49,21 @@ func (cmd *Run) CheckFlags() (r bool) {
 	return
 }
 
-type preRunCmd struct {
-	Run
-}
-
-func (*preRunCmd) Name() string     { return "prerun" }
-func (*preRunCmd) Synopsis() string { return "Start pre-run." }
-func (*preRunCmd) Usage() string {
-	return `prerun [-name] <string> [-compkey] <string> [-freq] <int> [-delay] <int> [-year] <int> [-month] <int> [-day] <int> [-initial] <int>:
-  Starts pre-run operation.
+func (*initCmd) Name() string     { return "init" }
+func (*initCmd) Synopsis() string { return "Initialize run." }
+func (*initCmd) Usage() string {
+	return `init [-name] <string> [-compkey] <string> [-freq] <int> [-delay] <int> [-year] <int> [-month] <int> [-day] <int> [-initial] <int>:
+  Starts run initialization, prints endpoint for backup tranfer.
 `
 }
 
-func (cmd *preRunCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	if ok := cmd.CheckFlags(); !ok {
 		fmt.Print("invalid arguments")
 		os.Exit(2)
 	}
 	req := sockets.Request{
-		sockets.PreRun_Req,
+		sockets.InitRun_Req,
 		rotator.RunConfigData{
 			CompatibilityKey: cmd.compkey,
 			Name:             cmd.name,
@@ -87,6 +83,6 @@ func (cmd *preRunCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 		fmt.Print(res.Error)
 		os.Exit(2)
 	}
-	// fmt.Print(res.Response)
+	fmt.Print(res.Response)
 	return subcommands.ExitSuccess
 }
