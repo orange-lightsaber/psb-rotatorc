@@ -13,10 +13,12 @@ import (
 
 type lastRunCmd struct {
 	name string
+	dir  string
 }
 
 func (cmd *lastRunCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&cmd.name, "name", "", "")
+	f.StringVar(&cmd.dir, "dir", "", "")
 }
 
 func (cmd *lastRunCmd) CheckFlags() (r bool) {
@@ -31,7 +33,7 @@ func (cmd *lastRunCmd) CheckFlags() (r bool) {
 func (*lastRunCmd) Name() string     { return "lastrun" }
 func (*lastRunCmd) Synopsis() string { return "Print time since last run." }
 func (*lastRunCmd) Usage() string {
-	return `lastrun [-name] <string>:
+	return `lastrun [-name] <string> [-dir] <string>:
 Prints time since last run.
 `
 }
@@ -44,7 +46,8 @@ func (cmd *lastRunCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interfac
 	req := sockets.Request{
 		sockets.LastRun_Req,
 		rotator.RunConfigData{
-			Name: cmd.name,
+			Name:      cmd.name,
+			BackupDir: cmd.dir,
 		}}
 	res, err := req.NewRequest()
 	if err != nil {

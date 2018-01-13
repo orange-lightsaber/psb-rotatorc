@@ -14,6 +14,7 @@ import (
 type initCmd struct {
 	name    string
 	compkey string
+	dir     string
 	freq    int
 	delay   int
 	year    int
@@ -25,6 +26,7 @@ type initCmd struct {
 func (cmd *initCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&cmd.name, "name", "", "")
 	f.StringVar(&cmd.compkey, "compkey", "", "")
+	f.StringVar(&cmd.dir, "dir", "", "")
 	f.IntVar(&cmd.freq, "freq", -1, "")
 	f.IntVar(&cmd.delay, "delay", -1, "")
 	f.IntVar(&cmd.year, "year", -1, "")
@@ -52,7 +54,7 @@ func (cmd *initCmd) CheckFlags() (r bool) {
 func (*initCmd) Name() string     { return "init" }
 func (*initCmd) Synopsis() string { return "Initialize run." }
 func (*initCmd) Usage() string {
-	return `init [-name] <string> [-compkey] <string> [-freq] <int> [-delay] <int> [-year] <int> [-month] <int> [-day] <int> [-initial] <int>:
+	return `init [-name] <string> [-compkey] <string> [-dir] <string> [-freq] <int> [-delay] <int> [-year] <int> [-month] <int> [-day] <int> [-initial] <int>:
   Starts run initialization, prints endpoint for backup tranfer.
 `
 }
@@ -67,6 +69,7 @@ func (cmd *initCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 		rotator.RunConfigData{
 			CompatibilityKey: cmd.compkey,
 			Name:             cmd.name,
+			BackupDir:        cmd.dir,
 			Frequency:        cmd.freq,
 			RotationDelay:    cmd.delay,
 			Year:             rotator.Year{Duration: cmd.year},
