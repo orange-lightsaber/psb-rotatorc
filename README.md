@@ -3,12 +3,12 @@ psb rotation handling
 
 This is the client application for the rotator daemon, it is ran remotely via ssh. Installing the daemon and client is manditory/only for remote backup jobs.
 
-### Build
+#### Build
 ```sh
 make build
 ```
 
-### Install
+#### Install
 ```sh
-make install
+sudo make install
 ```
